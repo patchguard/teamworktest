@@ -17,7 +17,7 @@ The repository is initially empty. On GitHub, create a README.md on main (or mak
 
 Recommended GitHub settings:
 1. Open Settings → Collaborators (or Collaborators and teams) and invite team members. Give only the permissions they need.
-2. Open Settings → Rules → Rulesets → New branch ruleset (or Settings → Branches → Add branch protection rule, if available).
+2. Open Settings → Branches → Add branch protection rule, if available).
 3. Target the default branch main and enable Require a pull request before merging.
 4. Require at least one approving review, dismiss stale approvals when new commits are pushed, and require conversation resolution before merging.
 5. Disable force pushes and branch deletion for main. Do not allow bypasses except for a deliberate emergency policy.
