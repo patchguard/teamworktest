@@ -73,8 +73,9 @@ Each developer should use a separate branch for each task.
 Edit your files, then inspect and stage only the intended changes:
 
 **-----------------------------------test step 3 start-------------------------------------------**
-{dirname} is fixed folder name, you need to replace it as you owned folder.
-For example, hwd is one folder owned by hwd
+
+**{dirname}** is **not** the fixed folder name, you need to replace it as **you owned folder**.
+For example, **hwd** is one folder owned by user **hwdsd2015**
 
 ```bash
 mkdir {dirname}
