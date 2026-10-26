@@ -12,6 +12,7 @@ Repository: https://github.com/patchguard/teamworktest
 
 Each team member runs:
 
+-----------------------------------test step 1 start-------------------------------------------
 ```bash
 git --version
 git clone https://github.com/patchguard/teamworktest.git
@@ -19,6 +20,7 @@ cd teamworktest
 git status
 git branch --show-current
 ```
+-----------------------------------test step 1 end-------------------------------------------
 
 Configure your identity if necessary:
 
@@ -40,12 +42,14 @@ To push changes, authenticate through Git Credential Manager, GitHub CLI, or an 
 Create or claim a GitHub Issue describing the work.
 
 Always start from an up-to-date `main`:
+-----------------------------------test step 2 start-------------------------------------------
 
 ```bash
 git switch main
 git pull --ff-only origin main
 git switch -c feature/42-add-homepage
 ```
+-----------------------------------test step 2 end-------------------------------------------
 
 ## Branch Naming Convention
 
@@ -67,13 +71,16 @@ Each developer should use a separate branch for each task.
 
 Edit your files, then inspect and stage only the intended changes:
 
+-----------------------------------test step 3 start-------------------------------------------
 ```bash
-git status
-git diff
+mkdir {dirname}
+cd {dirname}
+echo "test" > README.md
 git add README.md
 git commit -m "docs: clarify contribution workflow"
 git push -u origin feature/42-add-homepage
 ```
+-----------------------------------test step 3 end-------------------------------------------
 
 The staged files must match your actual work. Replace `README.md` and the example branch name with your own.
 
