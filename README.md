@@ -79,6 +79,7 @@ Edit your files, then inspect and stage only the intended changes:
 
 **{dirname}** is **not** the fixed folder name, you need to replace it as **you owned folder**.
 For example, **hwd** is one folder owned by user **hwdsd2015**
+
 **{branchname}** is **not** branch name, please use you owned branch created at step 2.
 
 ```bash
