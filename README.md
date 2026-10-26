@@ -1,4 +1,4 @@
-1. Install Git and clone the repository
+# 1. Install Git and clone the repository
 Each team member runs:
 git --version
 git clone https://github.com/patchguard/teamworktest.git
@@ -10,7 +10,7 @@ git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 Use your own email address. To push, authenticate through Git Credential Manager, GitHub CLI, or an SSH key; GitHub account passwords cannot be used for HTTPS Git pushes.
 
-2. Start a task on a feature branch
+# 2. Start a task on a feature branch
 Create or claim a GitHub Issue describing the work. Always start from an up-to-date main:
 git switch main
 git pull --ff-only origin main
@@ -25,7 +25,7 @@ test/	test/45-add-unit-tests	Tests
 chore/	chore/46-configure-ci	Maintenance
 
 
-3. Make small commits and push your branch
+# 3. Make small commits and push your branch
 Edit your files, then inspect and stage only the intended changes:
 git status
 git diff
@@ -38,7 +38,7 @@ git commit -m "fix: handle empty input"
 git push
 Prefer focused commits. Never commit passwords, API keys, .env files, build artifacts, or unrelated local changes.
 
-4. Open a Pull Request
+# 4. Open a Pull Request
 1). Open https://github.com/patchguard/teamworktest/pulls.
 2). Click New pull request (or Compare & pull request after pushing).
 3). Select base: main and compare: your feature branch.
@@ -46,18 +46,19 @@ Prefer focused commits. Never commit passwords, API keys, .env files, build arti
 5). Request review from a teammate other than the author.
 6). Wait for approval and any required checks. Do not merge your own PR unless the team has explicitly agreed on an exception.
 
-5. Review a teammate's PR
+# 5. Review a teammate's PR
 Reviewers should inspect Files changed, verify the behavior, and check for correctness, readability, regressions, and security issues.
 
 To test the branch locally:
 git fetch origin
 git switch --track origin/feature/42-add-homepage
-# Run the project's tests or start the application.
+
+Run the project's tests or start the application.
 If you already have a local branch with that name, use git switch feature/42-add-homepage instead. After testing, return to your own branch or main.
 
 On GitHub, choose Comment, Request changes, or Approve. If changes are requested, the author commits fixes to the same branch and pushes again; the PR updates automatically. Approval should apply to the latest changes.
 
-6. Keep your branch synchronized with main
+# 6. Keep your branch synchronized with main
 Other PRs may merge while you are working. Before requesting final review, update your feature branch:
 git switch feature/42-add-homepage
 git status  # Commit or stash your work before continuing.
@@ -75,7 +76,7 @@ git commit -m "merge: sync main and resolve conflict"
 git push
 If Git reports that there is no merge in progress, the merge may have completed automatically and no extra commit is needed. Test again after resolving conflicts. Prefer fetch + merge for this beginner workflow because it makes the operation explicit.
 
-7. Integration lead: merge and verify
+# 7. Integration lead: merge and verify
 Before merging, verify that:
 - The PR targets main and has the required independent approval.
 - All review comments are resolved and required CI checks pass.
@@ -85,26 +86,28 @@ Click Squash and merge (recommended for a tidy beginner-friendly history), then 
 
 Deployment is not automatic unless GitHub Pages or a deployment workflow has actually been configured. If deployment exists, check Actions and the live site after merging.
 
-8. Start the next task
+# 8. Start the next task
 Every developer refreshes local main and creates a new branch:
 git switch main
 git pull --ff-only origin main
 git branch -d feature/42-add-homepage
 git switch -c feature/47-next-task
 Delete the local branch only after it is no longer needed. If you used squash merge, git branch -d may refuse because the original branch commits are not ancestors of main; verify the PR was merged and the work is present before using git branch -D.
-11. Tag a tested milestone
+
+# 9. Tag a tested milestone
 The integration lead can mark a known-good commit:
 git switch main
 git pull --ff-only origin main
 git tag -a v1-integration -m "First tested integration"
 git push origin v1-integration
 Tags identify a commit for reference and recovery; they do not automatically deploy or roll back the website.
-12. Recover from a bad merge
+
+# 10. Recover from a bad merge
 For a squash-merged PR, GitHub's Revert button may be available on the merged PR. If available, use it to create a revert PR, have it reviewed, and merge it. For other merge methods or when the button is unavailable, ask the integration lead to prepare a suitable git revert commit on a new branch and open a PR.
 
 Do not use git reset --hard and force-push to rewrite shared main. Reverting a PR reverses its changes, but if later PRs depend on them, additional fixes may be required. Confirm CI and deployment after the revert.
 
-13. Example: two developers working simultaneously
+# 11. Example: two developers working simultaneously
 Assume Tom is building a new API helper and Amy is building the UI. These are illustrative file names, not existing files in this initially empty repository.
 
 Tom:
@@ -112,16 +115,19 @@ git switch main
 git pull --ff-only origin main
 git switch -c feature/10-api-tom
 mkdir -p js
-# Create and edit js/api.js
+
+Create and edit js/api.js
 git add js/api.js
 git commit -m "feat(api): add API helper"
 git push -u origin feature/10-api-tom
+
 Amy:
 git switch main
 git pull --ff-only origin main
 git switch -c feature/11-ui-amy
 mkdir -p js
-# Create and edit js/view.js
+
+Create and edit js/view.js
 git add js/view.js
 git commit -m "feat(ui): add view renderer"
 git push -u origin feature/11-ui-amy
