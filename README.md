@@ -1,5 +1,14 @@
 # GitHub Team Collaboration Workflow
 
+## Little Cake Studio game
+
+Open [src/beti.html](src/beti.html) in a modern browser to play. No installation,
+server, or internet connection is needed. Choose a flavor, add all four ingredients,
+whisk eight times, and let the cake bake. Then select frosting and tap the cake to
+add toppings, undo any unwanted toppings, and serve your creation. Keyboard users
+can Tab between controls and press Enter or Space; activating the cake places a
+topping automatically. **Start fresh** resets the game at any time.
+
 This guide explains how multiple developers can collaborate safely using Git, GitHub Issues, feature branches, Pull Requests, code reviews, and protected branches.
 
 Repository: https://github.com/patchguard/teamworktest

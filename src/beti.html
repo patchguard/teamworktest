@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Little Cake Studio</title>
+  <style>
+    :root { color-scheme: light; --ink: #49352f; --muted: #89736a; --pink: #b64563; --line: #eaded4; --cream: #fffaf3; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f7efe5; color: var(--ink); font-family: "Segoe UI", sans-serif; }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #507f79; outline-offset: 4px; }
+    button:disabled { cursor: not-allowed; opacity: .45; }
+    .app { max-width: 1240px; margin: auto; padding: 30px 42px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+    .brand { display: flex; align-items: center; gap: 12px; font-family: Georgia, serif; font-size: 23px; }
+    .brand-icon { width: 42px; height: 42px; background: #efd2ce; border-radius: 14px; display: grid; place-items: center; font-size: 26px; }
+    .outline { padding: 10px 17px; background: transparent; border: 1px solid #d7c6ba; border-radius: 25px; color: var(--ink); }
+    .intro { text-align: center; padding: 32px 0 25px; }
+    .eyebrow { color: var(--pink); font-size: 11px; letter-spacing: 3px; font-weight: 700; text-transform: uppercase; }
+    h1 { margin: 10px 0; font: 48px/1.15 Georgia, serif; }
+    .intro p, .hint { color: var(--muted); font-size: 14px; line-height: 1.6; }
+    .steps { display: flex; justify-content: center; gap: 32px; padding: 0; margin: 0 0 30px; list-style: none; }
+    .steps li { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .steps span { display: grid; place-items: center; border: 1px solid #d9cabe; border-radius: 50%; width: 27px; height: 27px; }
+    .steps .active { color: var(--pink); font-weight: 700; }
+    .steps .active span, .steps .done span { background: var(--pink); color: white; border-color: var(--pink); }
+    main { display: grid; grid-template-columns: 310px 1fr; background: var(--cream); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 45px #684d3510; }
+    aside { padding: 28px; border-right: 1px solid var(--line); }
+    h2 { font: 25px Georgia, serif; margin: 8px 0 12px; }
+    h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 12px; }
+    .choices { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .choice { background: #fffdf9; border: 1px solid var(--line); border-radius: 12px; padding: 11px 4px; color: var(--ink); font-size: 11px; }
+    .choice b { display: block; font-size: 23px; margin-bottom: 5px; font-weight: normal; }
+    .choice[aria-pressed="true"] { border-color: var(--pink); background: #fae9ea; box-shadow: inset 0 0 0 1px var(--pink); }
+    .ingredients { display: grid; gap: 8px; }
+    .ingredient { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px; background: #fffdf9; color: var(--ink); text-align: left; }
+    .ingredient .amount { margin-left: auto; color: var(--muted); font-size: 12px; }
+    .ingredient[aria-pressed="true"] { background: #edf2e8; border-color: #a9bb9e; }
+    .primary { background: var(--pink); color: white; border: 0; border-radius: 12px; padding: 14px 20px; font-weight: 600; width: 100%; margin-top: 22px; }
+    .primary:not(:disabled):hover { background: #963650; }
+    .worktop { position: relative; min-height: 520px; display: flex; flex-direction: column; align-items: center; padding: 25px; background: radial-gradient(ellipse at 50% 38%, #fffdf7, #f3e8d9); }
+    .badge { align-self: flex-start; background: #fffaf0; border: 1px solid #e5d5bc; padding: 7px 12px; border-radius: 20px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+    .scene { position: relative; width: min(100%, 500px); height: 320px; margin: 22px 0 0; }
+    .scene::after { content: ""; position: absolute; bottom: 16px; left: 12%; width: 76%; height: 28px; border-radius: 50%; background: #8061481a; filter: blur(8px); }
+    .bowl { position: absolute; width: 260px; height: 140px; left: calc(50% - 130px); top: 130px; background: linear-gradient(100deg, #c66870, #e4a0a0 48%, #b95d68); border-radius: 12px 12px 130px 130px; box-shadow: inset 0 -10px 0 #9c4b5b22; z-index: 2; }
+    .batter { position: absolute; height: 42px; width: 260px; top: -18px; border: 9px solid #e9b5b1; background: #ebd2a4; border-radius: 50%; transition: background .4s; }
+    .whisk { position: absolute; font-size: 90px; left: 105px; top: -100px; transform: rotate(25deg); transform-origin: bottom; }
+    .mixing .whisk { animation: stir .22s ease-in-out; }
+    @keyframes stir { 50% { transform: rotate(-20deg) translateX(-30px); } }
+    .bowl-note { position: absolute; top: 205px; left: 0; width: 100%; text-align: center; z-index: 3; color: white; font: italic 20px Georgia, serif; }
+    .oven { position: absolute; inset: 35px 75px 35px; border: 12px solid #86a6a0; border-top-width: 45px; border-radius: 20px; background: #4c413c; box-shadow: 0 12px 0 #71918b; display: grid; place-items: center; }
+    .oven::before { content: ""; position: absolute; top: -29px; left: 15px; width: 85px; height: 12px; border-radius: 6px; background: #e4e9df; }
+    .oven-glow { font-size: 75px; filter: drop-shadow(0 0 30px #f4a345); animation: warm 1s infinite alternate; }
+    @keyframes warm { to { filter: drop-shadow(0 0 50px #f4a345); transform: scale(1.05); } }
+    .cake { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; padding: 0; cursor: crosshair; color: inherit; }
+    .cake svg { width: 100%; height: 100%; overflow: visible; }
+    .cake:disabled { opacity: 1; cursor: default; }
+    .decoration { position: absolute; transform: translate(-50%, -50%); font-size: 24px; pointer-events: none; z-index: 4; line-height: 1; }
+    .status { text-align: center; font: 23px Georgia, serif; margin: 8px 0; }
+    .worktop .hint { text-align: center; max-width: 380px; margin: 4px 0 15px; min-height: 44px; }
+    .progress { height: 7px; width: 190px; border-radius: 9px; background: #e8dbca; overflow: hidden; }
+    .progress div { height: 100%; width: 0; background: var(--pink); transition: width .2s; }
+    .swatches { display: flex; gap: 12px; }
+    .swatch { width: 44px; height: 44px; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 0 0 1px #dccfc3; }
+    .swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--pink); }
+    .mini { border: 0; background: transparent; color: var(--pink); text-decoration: underline; padding: 12px 0 0; font-size: 12px; }
+    .result { background: #f5e6d1; border-radius: 12px; padding: 14px; margin-top: 20px; text-align: center; }
+    .result strong { display: block; font: 24px Georgia, serif; margin-bottom: 8px; }
+    footer { text-align: center; color: var(--muted); font-size: 12px; padding: 25px 0 0; }
+    [hidden] { display: none !important; }
+    @media (max-width: 740px) {
+      .app { padding: 18px 14px; } h1 { font-size: 36px; } .brand { font-size: 20px; }
+      .steps { gap: 13px; } .steps li { gap: 5px; font-size: 11px; }
+      main { grid-template-columns: 1fr; } aside { border-right: 0; border-bottom: 1px solid var(--line); padding: 22px; }
+      .ingredients { grid-template-columns: 1fr 1fr; } .ingredient { padding: 10px; gap: 6px; }
+      .worktop { min-height: 445px; padding: 20px 10px; } .scene { margin-top: 0; }
+      .oven { left: 35px; right: 35px; } .intro { padding-top: 25px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand"><span class="brand-icon" aria-hidden="true">&#127856;</span> Little Cake Studio</div>
+      <button class="outline" id="restart">Start fresh &#8635;</button>
+    </header>
+    <section class="intro">
+      <div class="eyebrow">A little flour. A lot of joy.</div>
+      <h1>Happiness, made from scratch.</h1>
+      <p>Your kitchen, your creation. Let's bake something lovely.</p>
+    </section>
+    <ol class="steps" aria-label="Recipe progress">
+      <li class="active" aria-current="step"><span>1</span> Prepare</li>
+      <li><span>2</span> Mix &amp; bake</li>
+      <li><span>3</span> Decorate</li>
+      <li><span>4</span> Enjoy</li>
+    </ol>
+    <main>
+      <aside>
+        <div class="eyebrow" id="step-label">Step 01 / The good stuff</div>
+        <h2 id="panel-title">A recipe for happiness</h2>
+        <div id="prepare-panel">
+          <p class="hint">Pick your favorite flavor, then tap each ingredient to add it to the bowl.</p>
+          <h3>Cake flavor</h3>
+          <div class="choices" id="flavors">
+            <button class="choice" data-flavor="vanilla" aria-pressed="true"><b aria-hidden="true">&#127804;</b>Vanilla</button>
+            <button class="choice" data-flavor="chocolate" aria-pressed="false"><b aria-hidden="true">&#127851;</b>Chocolate</button>
+            <button class="choice" data-flavor="strawberry" aria-pressed="false"><b aria-hidden="true">&#127827;</b>Strawberry</button>
+          </div>
+          <h3>Into the bowl <span id="ingredient-count">(0/4)</span></h3>
+          <div class="ingredients" id="ingredients">
+            <button class="ingredient" data-ingredient="flour" aria-pressed="false"><span aria-hidden="true">&#127806;</span> Flour <span class="amount">2 cups</span></button>
+            <button class="ingredient" data-ingredient="sugar" aria-pressed="false"><span aria-hidden="true">&#129474;</span> Sugar <span class="amount">1 cup</span></button>
+            <button class="ingredient" data-ingredient="eggs" aria-pressed="false"><span aria-hidden="true">&#129370;</span> Eggs <span class="amount">2 eggs</span></button>
+            <button class="ingredient" data-ingredient="butter" aria-pressed="false"><span aria-hidden="true">&#129480;</span> Butter <span class="amount">1/2 cup</span></button>
+          </div>
+        </div>
+        <div id="mix-panel" hidden>
+          <p class="hint">A little elbow grease! Tap the button 8 times to whisk your batter until it's silky smooth.</p>
+          <div class="result"><strong id="mix-count">0 / 8</strong>happy little stirs</div>
+        </div>
+        <div id="decorate-panel" hidden>
+          <p class="hint">Make it yours. Choose a topping, then tap the cake to place it. Keyboard bakers: focus the cake and press Enter.</p>
+          <h3>Frosting</h3>
+          <div class="swatches" id="frostings">
+            <button class="swatch" style="background:#f8e9ce" data-frosting="#f8e9ce" aria-label="Vanilla frosting" aria-pressed="true"></button>
+            <button class="swatch" style="background:#f1afbf" data-frosting="#f1afbf" aria-label="Pink frosting" aria-pressed="false"></button>
+            <button class="swatch" style="background:#79503f" data-frosting="#79503f" aria-label="Chocolate frosting" aria-pressed="false"></button>
+            <button class="swatch" style="background:#c5bbdf" data-frosting="#c5bbdf" aria-label="Lavender frosting" aria-pressed="false"></button>
+          </div>
+          <h3>A finishing touch</h3>
+          <div class="choices" id="toppings">
+            <button class="choice" data-topping="berry" aria-pressed="true"><b aria-hidden="true">&#127827;</b>Berries</button>
+            <button class="choice" data-topping="star" aria-pressed="false"><b aria-hidden="true">&#11088;</b>Stars</button>
+            <button class="choice" data-topping="flower" aria-pressed="false"><b aria-hidden="true">&#127800;</b>Flowers</button>
+          </div>
+          <button class="mini" id="undo" disabled>Undo last topping</button>
+          <p class="hint" id="topping-count">0 / 24 toppings</p>
+        </div>
+        <div id="enjoy-panel" hidden>
+          <p class="hint">Made with love, served with a smile. Your one-of-a-kind cake is ready for its big moment.</p>
+          <div class="result"><strong id="award"></strong><span id="summary"></span></div>
+        </div>
+        <button class="primary" id="action" disabled>Let's mix it up</button>
+      </aside>
+      <section class="worktop" aria-label="Your baking station">
+        <div class="badge" id="station-label">The mixing station</div>
+        <div class="scene" id="scene">
+          <div id="bowl-view">
+            <div class="bowl" id="bowl"><div class="batter" id="batter"></div><div class="whisk" aria-hidden="true">&#129379;</div></div>
+            <div class="bowl-note" id="bowl-note">a little magic starts here</div>
+          </div>
+          <div class="oven" id="oven-view" hidden><div class="oven-glow" aria-hidden="true">&#127856;</div></div>
+          <button class="cake" id="cake-view" aria-label="Cake decorating area. Press Enter to add a topping." hidden>
+            <svg viewBox="0 0 500 320" aria-hidden="true">
+              <ellipse cx="250" cy="276" rx="184" ry="25" fill="#d4dcd4"/>
+              <ellipse cx="250" cy="268" rx="184" ry="25" fill="#f3f5ee"/>
+              <path d="M105 139 L105 236 C105 281 395 281 395 236 L395 139Z" id="sponge" fill="#d8aa6d"/>
+              <path d="M105 189 C145 225 355 225 395 189 L395 204 C355 240 145 240 105 204Z" fill="#fff0d8" opacity=".85"/>
+              <path d="M105 139 L105 176 Q118 198 131 177 L131 166 Q146 151 159 180 Q174 208 187 179 L187 165 Q203 151 218 178 Q230 196 244 176 L244 168 Q263 150 281 177 Q296 203 310 180 L310 166 Q328 153 344 178 Q359 203 374 175 L374 165 Q387 174 395 164 L395 139Z" id="icing-drip" fill="#f8e9ce"/>
+              <ellipse cx="250" cy="139" rx="145" ry="48" id="icing-top" fill="#f8e9ce"/>
+              <ellipse cx="250" cy="135" rx="126" ry="35" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="status" id="status" role="status" aria-live="polite">Every great cake starts with you.</div>
+        <p class="hint" id="scene-hint">Gather your ingredients on the left. A delicious little adventure awaits.</p>
+        <div class="progress" id="progress" role="progressbar" aria-label="Baking progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div>
+      </section>
+    </main>
+    <footer>A tiny baking escape. No timers to beat, just something sweet.</footer>
+  </div>
+  <script>
+    "use strict";
+    const $ = id => document.getElementById(id);
+    const flavors = {
+      vanilla: { name: "Vanilla", batter: "#ebd2a4", sponge: "#d8aa6d" },
+      chocolate: { name: "Chocolate", batter: "#80523f", sponge: "#704634" },
+      strawberry: { name: "Strawberry", batter: "#e6a5ad", sponge: "#d68d98" }
+    };
+    const toppings = { berry: "\u{1F353}", star: "\u2B50", flower: "\u{1F338}" };
+    let stage, flavor, ingredients, stirs, topping, decorations, bakeTimer;
+    function select(group, selected) {
+      $(group).querySelectorAll("button").forEach(button => button.setAttribute("aria-pressed", String(button === selected)));
+    }
+    function progress(value) {
+      $("progress").setAttribute("aria-valuenow", String(value));
+      $("progress-fill").style.width = value + "%";
+    }
+    function message(title, hint) {
+      $("status").textContent = title;
+      $("scene-hint").textContent = hint;
+    }
+    function setStage(next) {
+      stage = next;
+      const step = next === "bake" ? 1 : ["prepare", "mix", "decorate", "enjoy"].indexOf(next);
+      document.querySelectorAll(".steps li").forEach((item, index) => {
+        item.classList.toggle("active", index === step);
+        item.classList.toggle("done", index < step);
+        if (index === step) item.setAttribute("aria-current", "step");
+        else item.removeAttribute("aria-current");
+      });
+      ["prepare", "mix", "decorate", "enjoy"].forEach(name => {
+        $(name + "-panel").hidden = name !== next && !(name === "mix" && next === "bake");
+      });
+      $("bowl-view").hidden = !["prepare", "mix"].includes(next);
+      $("oven-view").hidden = next !== "bake";
+      $("cake-view").hidden = !["decorate", "enjoy"].includes(next);
+      $("cake-view").disabled = next !== "decorate";
+      $("progress").hidden = next === "decorate" || next === "enjoy";
+      const titles = ["A recipe for happiness", "Whisk up some joy", "The sweetest details", "You made something lovely"];
+      $("panel-title").textContent = titles[step];
+      $("step-label").textContent = `Step 0${step + 1} / ${["The good stuff", "A little kitchen magic", "Your creative moment", "Made with love"][step]}`;
+      $("station-label").textContent = ["The mixing station", next === "bake" ? "Warm & cozy oven" : "The mixing station", "The decorating table", "Fresh from your imagination"][step];
+    }
+    function reset() {
+      clearInterval(bakeTimer);
+      flavor = "vanilla"; ingredients = new Set(); stirs = 0; topping = "berry"; decorations = [];
+      document.querySelectorAll(".decoration").forEach(item => item.remove());
+      document.querySelectorAll("[data-ingredient]").forEach(button => button.setAttribute("aria-pressed", "false"));
+      select("flavors", document.querySelector('[data-flavor="vanilla"]'));
+      select("frostings", document.querySelector("[data-frosting]"));
+      select("toppings", document.querySelector("[data-topping]"));
+      $("batter").style.background = flavors.vanilla.batter;
+      $("sponge").setAttribute("fill", flavors.vanilla.sponge);
+      ["icing-top", "icing-drip"].forEach(id => $(id).setAttribute("fill", "#f8e9ce"));
+      $("ingredient-count").textContent = "(0/4)";
+      $("mix-count").textContent = "0 / 8";
+      $("bowl-note").textContent = "a little magic starts here";
+      $("topping-count").textContent = "0 / 24 toppings";
+      $("undo").disabled = true;
+      $("action").textContent = "Let's mix it up";
+      $("action").disabled = true;
+      progress(0); setStage("prepare");
+      message("Every great cake starts with you.", "Gather your ingredients on the left. A delicious little adventure awaits.");
+    }
+    $("flavors").addEventListener("click", event => {
+      const button = event.target.closest("[data-flavor]");
+      if (!button || stage !== "prepare") return;
+      flavor = button.dataset.flavor; select("flavors", button);
+      $("batter").style.background = flavors[flavor].batter;
+      $("sponge").setAttribute("fill", flavors[flavor].sponge);
+      message(flavor === "chocolate" ? "A little cocoa magic!" : `${flavors[flavor].name}? Lovely choice.`, "Your flavor is ready. Add all four ingredients to begin.");
+    });
+    $("ingredients").addEventListener("click", event => {
+      const button = event.target.closest("[data-ingredient]");
+      if (!button || stage !== "prepare") return;
+      const ingredient = button.dataset.ingredient;
+      if (ingredients.has(ingredient)) return;
+      ingredients.add(ingredient); button.setAttribute("aria-pressed", "true");
+      $("ingredient-count").textContent = `(${ingredients.size}/4)`;
+      $("bowl-note").textContent = `${ingredients.size} of 4 ingredients`;
+      progress(ingredients.size * 25);
+      $("action").disabled = ingredients.size !== 4;
+      message(ingredients.size === 4 ? "All the good stuff is in!" : `${ingredient[0].toUpperCase() + ingredient.slice(1)} added!`, ingredients.size === 4 ? "Your bowl is ready. Let's mix it up." : "Keep adding ingredients. Tap each one just once.");
+    });
+    function bake() {
+      setStage("bake"); progress(0);
+      $("action").disabled = true; $("action").textContent = "Baking something lovely...";
+      message("Getting golden, getting gorgeous.", "Relax! Your cake will be ready in a few seconds.");
+      let ticks = 0;
+      bakeTimer = setInterval(() => {
+        ticks++; progress(ticks * 10);
+        if (ticks === 10) {
+          clearInterval(bakeTimer); setStage("decorate");
+          $("action").disabled = false; $("action").textContent = "Serve my masterpiece";
+          message("A blank canvas. A delicious one.", "Pick a frosting and add toppings anywhere on the cake. Or keep it beautifully simple.");
+          $("action").focus();
+        }
+      }, 400);
+    }
+    $("action").addEventListener("click", () => {
+      if (stage === "prepare" && ingredients.size === 4) {
+        setStage("mix"); progress(0); $("action").textContent = "Whisk the batter";
+        message("Ready, set, whisk!", "Tap Whisk the batter 8 times. Every stir brings you closer.");
+      } else if (stage === "mix") {
+        stirs++; progress(stirs / 8 * 100); $("mix-count").textContent = `${stirs} / 8`;
+        $("bowl-note").textContent = stirs === 8 ? "smooth & lovely" : "whisking up happiness";
+        $("bowl").classList.remove("mixing");
+        void $("bowl").offsetWidth;
+        $("bowl").classList.add("mixing");
+        if (stirs === 8) bake();
+      } else if (stage === "decorate") {
+        setStage("enjoy");
+        const variety = new Set(decorations.map(item => item.type)).size;
+        $("award").textContent = variety === 3 ? "The joyful showstopper!" : decorations.length ? "The sweetest masterpiece!" : "Simply beautiful!";
+        $("summary").textContent = `${flavors[flavor].name} cake, ${decorations.length} toppings, 100% made by you.`;
+        $("action").textContent = "Bake another cake";
+        message("Cake is better when you share it.", "Your creation is ready! Bake another to try a new flavor and design.");
+      } else if (stage === "enjoy") reset();
+    });
+    $("frostings").addEventListener("click", event => {
+      const button = event.target.closest("[data-frosting]");
+      if (!button || stage !== "decorate") return;
+      select("frostings", button);
+      ["icing-top", "icing-drip"].forEach(id => $(id).setAttribute("fill", button.dataset.frosting));
+    });
+    $("toppings").addEventListener("click", event => {
+      const button = event.target.closest("[data-topping]");
+      if (!button || stage !== "decorate") return;
+      topping = button.dataset.topping; select("toppings", button);
+    });
+    function updateToppingCount() {
+      $("topping-count").textContent = `${decorations.length} / 24 toppings`;
+      $("undo").disabled = decorations.length === 0;
+    }
+    $("cake-view").addEventListener("click", event => {
+      if (stage !== "decorate") return;
+      if (decorations.length >= 24) {
+        message("A whole lot of lovely!", "You've used all 24 toppings. Undo one to make room, or serve your cake.");
+        return;
+      }
+      const rect = $("cake-view").getBoundingClientRect();
+      // Match the SVG's centered, aspect-preserving coordinate system on narrow screens.
+      const scale = Math.min(rect.width / 500, rect.height / 320);
+      const offsetX = (rect.width - 500 * scale) / 2;
+      const offsetY = (rect.height - 320 * scale) / 2;
+      let x, y;
+      if (event.detail === 0) {
+        const angle = decorations.length * 2.4;
+        const radius = Math.sqrt(decorations.length / 24);
+        x = 250 + Math.cos(angle) * radius * 110;
+        y = 139 + Math.sin(angle) * radius * 30;
+      } else {
+        x = (event.clientX - rect.left - offsetX) / scale;
+        y = (event.clientY - rect.top - offsetY) / scale;
+      }
+      const onTop = ((x - 250) / 140) ** 2 + ((y - 139) / 45) ** 2 <= 1;
+      const onSide = x >= 110 && x <= 390 && y >= 145 && y <= 240;
+      if (!onTop && !onSide) {
+        message("Aim for the cake!", "Tap the frosting or the sides to add a little sweetness.");
+        return;
+      }
+      const element = document.createElement("span");
+      element.className = "decoration"; element.textContent = toppings[topping];
+      element.setAttribute("aria-hidden", "true");
+      element.style.left = `${(offsetX + x * scale) / rect.width * 100}%`;
+      element.style.top = `${(offsetY + y * scale) / rect.height * 100}%`;
+      $("cake-view").append(element); decorations.push({ element, type: topping });
+      updateToppingCount();
+      message("A little more you, with every topping.", "Keep creating, or serve your masterpiece whenever you're happy.");
+    });
+    $("undo").addEventListener("click", () => {
+      if (stage !== "decorate" || !decorations.length) return;
+      decorations.pop().element.remove(); updateToppingCount();
+      message("A fresh little possibility.", "Last topping removed. Try a different spot or finishing touch.");
+    });
+    $("restart").addEventListener("click", reset);
+    reset();
+  </script>
+</body>
+</html>
